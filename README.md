@@ -13,3 +13,12 @@ oyster1.top_up(90)
 oyster1.balance
 oyster.top_up(5)
 oyster1.balance => "Reached maximum limit"
+
+oyster1 = Oystercard.new
+ => #<Oystercard:0x00007fa5220e1388 @balance=0, @oyster_limit=90> 
+3.0.0 :002 > oyster1.top_up(50)
+ => 50 
+3.0.0 :003 > oyster1.deduct(30)
+ => 20 
+3.0.0 :004 > oyster1.balance
+ => 20 
