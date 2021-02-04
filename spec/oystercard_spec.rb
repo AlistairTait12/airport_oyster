@@ -24,7 +24,7 @@ require 'oystercard'
       describe '#deduct' do
         it 'deducts money from the balance' do
           oystercard.top_up(50)
-          oystercard.touch_out
+          oystercard.touch_out(station)
           expect(oystercard.balance).to eq(49)
         end
       end
@@ -45,12 +45,12 @@ require 'oystercard'
         it 'card needs to touch out' do
           oystercard.top_up(10)
           oystercard.touch_in(station)
-          oystercard.touch_out
+          oystercard.touch_out(station)
           expect(oystercard.in_journey?).to eq false
         end
 
         it 'charges the minimum fare amount at end of journey' do
-          expect{ oystercard.touch_out }.to change {oystercard.balance}.by -1
+          expect{ oystercard.touch_out(station) }.to change {oystercard.balance}.by -1
         end
       end
     
@@ -76,6 +76,7 @@ require 'oystercard'
     end
 
     it 'hold journey history' do
+      oystercard.top_up(Oystercard::LIMIT)
       oystercard.touch_in(station)
       oystercard.touch_out(station)
       expect(oystercard.journey_history).to eq [{:in => station, :out => station}]

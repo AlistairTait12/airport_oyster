@@ -19,8 +19,9 @@ class Oystercard
     @entry_station = station 
   end
 
-  def touch_out
-    @entry_station = nil 
+  def touch_out(station)
+    @journey_history.push({:in => @entry_station, :out => station})
+    @entry_station = nil
     @balance -= @minimum_cap
   end
 
