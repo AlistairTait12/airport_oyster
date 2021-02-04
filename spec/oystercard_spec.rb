@@ -15,7 +15,7 @@ require 'oystercard'
         oystercard.top_up(20)
         expect(oystercard.balance).to eq(20)
       end
-      pending it 'raises error if top_up would bring balance over maximum' do
+      it 'raises error if top_up would bring balance over maximum' do
         oystercard.top_up(oystercard.oyster_limit)
 
         expect { oystercard.top_up(5) }.to raise_error("Maximum amount of #{oystercard.oyster_limit} already reached")
@@ -32,21 +32,21 @@ require 'oystercard'
       describe '#touch-in' do
         it 'card needs to touch in' do
           oystercard.top_up(5)
-          oystercard.touch_in
-          expect(oystercard.in_journey).to eq true
+          oystercard.touch_in(station)
+          expect(oystercard.in_journey?).to eq true
         end
 
         it 'raises an error if balance is less than £1' do
-          expect{ oystercard.touch_in }.to raise_error "You do not have enough money for this journey : please top up"
+          expect{ oystercard.touch_in(station) }.to raise_error "You do not have enough money for this journey : please top up"
         end 
       end
 
       describe '#touch-out' do
         it 'card needs to touch out' do
           oystercard.top_up(10)
-          oystercard.touch_in
+          oystercard.touch_in(station)
           oystercard.touch_out
-          expect(oystercard.in_journey).to eq false
+          expect(oystercard.in_journey?).to eq false
         end
 
         it 'charges the minimum fare amount at end of journey' do
@@ -56,9 +56,30 @@ require 'oystercard'
     
       describe '#entry_station' do
         it 'stores the entry station of the journey' do
+        oystercard.top_up(20)
           oystercard.touch_in(station)
           expect(oystercard.entry_station).to eq station
         end
       end
 
+      describe '#in_journey' do
+        it 'returns the in_journey state' do
+          oystercard.top_up(10)
+          oystercard.touch_in(station)
+          expect(oystercard.in_journey?).to eq true
+        end
+      end
+
+  describe '#journey_history' do
+    it 'should be empty when oystercard is initialized' do
+      expect(oystercard.journey_history).to eq []
     end
+
+    it 'hold journey history' do
+      oystercard.touch_in(station)
+      oystercard.touch_out(station)
+      expect(oystercard.journey_history).to eq [{:in => station, :out => station}]
+    end
+  end
+end
+

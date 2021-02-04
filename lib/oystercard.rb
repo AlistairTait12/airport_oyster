@@ -1,13 +1,13 @@
 class Oystercard
-  attr_accessor :balance, :oyster_limit, :in_journey, :minimum_cap, :entry_station
+  attr_reader :balance, :entry_station, :oyster_limit, :journey_history
   LIMIT = 90
   MINIMUM = 1
-  def initialize(oyster_limit = LIMIT, minimum_cap = MINIMUM, entry_station)
+  def initialize(oyster_limit = LIMIT, minimum_cap = MINIMUM)
     @balance = 0
     @oyster_limit = oyster_limit
-    @in_journey = false
     @minimum_cap = minimum_cap
-    @entry_station = entry_station
+    @entry_station = nil
+    @journey_history = []
   end
   def top_up(num)
     raise "Maximum amount of #{oyster_limit} already reached" if num + @balance > LIMIT
@@ -16,14 +16,16 @@ class Oystercard
   
   def touch_in(station)
     raise "You do not have enough money for this journey : please top up" if @balance < MINIMUM
-    @entry_station = station
-    @in_journey = true   
+    @entry_station = station 
   end
 
   def touch_out
     @entry_station = nil 
     @balance -= @minimum_cap
-    @in_journey = false
+  end
+
+  def in_journey?
+    @entry_station == nil ? false : true
   end
 
   private
